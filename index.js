@@ -1,6 +1,8 @@
 const express = require("express");
 const cors = require("cors");
 const mongo = require("mongodb").MongoClient;
+const cool = require('cool-ascii-faces')
+const PORT = process.env.PORT || 4000
 
 const getNotVerifiedHashes = require("./mongo-helper").getNotVerifiedHashes;
 const getProductsHashes = require("./mongo-helper").getProductsHashes;
@@ -65,7 +67,7 @@ function reload_hashArrays(db, fn) {
   });
 }
 
-app.get("/", (request, response) => {});
+app.get("/", (request, response) => {response.send("Uszanowanko")});
 
 app.post("/sync", (request, response) => {
   console.log("SYNC");
@@ -270,6 +272,6 @@ app.post("/download", (request, response) => {
   });
 });
 
-app.listen(4000, () => {
-  console.log("FitCalc server listening on port 4000");
+app.listen(PORT, () => {
+  console.log("FitCalc server listening on port "+PORT);
 });
