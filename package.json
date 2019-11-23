@@ -4,7 +4,8 @@
   "description": "Fit Calc server with simple administration panel. If you want, you can merge client part with server",
   "main": "index.js",
   "scripts": {
-    "test": "console.log(\"work\")"
+    "test": "console.log(\"work\")",
+    "start": "node index.js"
   },
   "author": "Mateusz Nejman",
   "license": "ISC",
