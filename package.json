@@ -1,0 +1,16 @@
+{
+  "name": "fitcalc-server",
+  "version": "1.0.0",
+  "description": "Fit Calc server with simple administration panel. If you want, you can merge client part with server",
+  "main": "index.js",
+  "scripts": {
+    "test": "console.log(\"work\")"
+  },
+  "author": "Mateusz Nejman",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "mongodb": "^3.3.4"
+  }
+}
