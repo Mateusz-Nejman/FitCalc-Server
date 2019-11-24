@@ -71,7 +71,8 @@ app.get("/", (request, response) => {response.send("Uszanowanko")});
 
 app.post("/sync", (request, response) => {
   console.log("SYNC");
-  const userProducts = JSON.parse(request.body.data);
+  console.log(request.body);
+  const userProducts = request.body.data;
   console.log("userProducts");
   console.log(userProducts);
   console.log("userProducts end");
@@ -230,7 +231,8 @@ app.post("/verify/:hash", (request, response) => {
 app.post("/download", (request, response) => {
   console.log("DOWNLOAD");
   let userProductsHashes = [];
-  const userProducts = JSON.parse(request.body.data);
+  console.log(request.body);
+  const userProducts = request.body.data;
 
   userProducts.forEach(element => {
     userProductsHashes = [...userProductsHashes, element[6]];
