@@ -77,8 +77,8 @@ app.post("/sync", (request, response) => {
   console.log("userProducts end");
   let verifyProducts = [];
   userProducts.forEach(element => {
-    if (!allHashes.includes(element[7])) {
-      console.log("not include " + element[7] + ", " + element[0]);
+    if (!allHashes.includes(element[6])) {
+      console.log("not include " + element[6] + ", " + element[0]);
       console.log(element);
       verifyProducts = [
         ...verifyProducts,
@@ -89,7 +89,7 @@ app.post("/sync", (request, response) => {
           fat: element[3],
           portion: element[4],
           kcal: element[5],
-          hash: element[7]
+          hash: element[6]
         }
       ];
     }
@@ -233,7 +233,7 @@ app.post("/download", (request, response) => {
   const userProducts = JSON.parse(request.body.data);
 
   userProducts.forEach(element => {
-    userProductsHashes = [...userProductsHashes, element[7]];
+    userProductsHashes = [...userProductsHashes, element[6]];
     console.log(element);
   });
 
