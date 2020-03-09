@@ -12,17 +12,24 @@ const getToVerifyHashes = require("./mongo-helper").getToVerifyHashes;
 const url =
   "mongodb://fitcalc:Fitcalc1@ds057857.mlab.com:57857/heroku_3qg108jr";
 
+const localUrl = "mongodb://localhost:27017/fitcalc";
+
 const app = express();
 
 app.use(cors());
 app.use(express.json());
-app.use(bodyParser.json({limit: '50mb'}));
-app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
+app.use(bodyParser.json({ limit: '50mb' }));
+app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 
 let not_verifiedHashes = [];
 let to_verifyHashes = [];
 let productsHashes = [];
 let allHashes = [];
+
+const getHash = str => {
+  const buffer = require('buffer').Buffer;
+  return new Buffer(str).toString("base64");
+};
 
 mongo.connect(url, (error, database) => {
   if (error) throw error;
@@ -70,7 +77,7 @@ function reload_hashArrays(db, fn) {
   });
 }
 
-app.get("/", (request, response) => {response.send("Uszanowanko")});
+app.get("/", (request, response) => { response.send("Uszanowanko") });
 
 app.post("/sync", (request, response) => {
   console.log("SYNC");
@@ -277,6 +284,87 @@ app.post("/download", (request, response) => {
   });
 });
 
+app.post("/transfer", (request, response) => {
+  console.log("TRANSFER");
+  let toTransfer = [];
+
+  mongo.connect(url, (error, database) => {
+    if (error) throw error;
+    const db = database.db();
+
+    db.collection("products")
+      .find({})
+      .toArray((error, result) => {
+        if (error) throw error;
+
+
+        database.close();
+        mongo.connect(localUrl, (error, database) => {
+          const db = database.db();
+          db.collection("products").insertMany(result, (err, res) => {
+            console.log("Completed");
+            database.close();
+          });
+        });
+      });
+  });
+});
+
+app.get("/transfer", (request, response) => {
+  console.log("TRANSFER");
+  mongo.connect(url, (error, database) => {
+    if (error) throw error;
+    const db = database.db();
+
+    db.collection("products")
+      .find({})
+      .toArray((error, result) => {
+        if (error) throw error;
+
+        let toTransfer = [];
+
+        result.forEach(value => {
+          let newObject = {
+            ...value,
+            hash: getHash(`${value.name};${value.protein};${value.carbo};${value.fat};${value.portion}`)
+          }
+          toTransfer.push(newObject);
+        });
+
+        database.close();
+        mongo.connect(localUrl, (error, database) => {
+          const db = database.db();
+          db.collection("products").insertMany(toTransfer, (err, res) => {
+            console.log("Completed");
+            database.close();
+          });
+        });
+      });
+  });
+});
+
+app.get("/transfer_hash", (request, response) => {
+  console.log("TRANSFER");
+  let toTransfer = [];
+
+  mongo.connect(localUrl, (error, database) => {
+    if (error) throw error;
+    const db = database.db();
+
+    db.collection("products")
+      .find({})
+      .toArray((error, result) => {
+        if (error) throw error;
+
+        result.forEach((value, index) => {
+
+        });
+
+        database.close();
+      });
+  });
+});
+
 app.listen(PORT, () => {
-  console.log("FitCalc server listening on port "+PORT);
+  console.log("FitCalc server listening on port " + PORT);
 });
