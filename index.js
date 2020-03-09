@@ -276,9 +276,11 @@ app.post("/download", (request, response) => {
             }
           ];
         });
+        console.log("start send");
         response.send({
           data: newProducts
         });
+        console.log("end send");
         database.close();
       });
   });
