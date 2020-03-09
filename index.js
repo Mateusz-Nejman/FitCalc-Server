@@ -258,7 +258,7 @@ app.post("/download", (request, response) => {
         hash: {
           $nin: userProductsHashes
         }
-      })
+      }).limit(1000)
       .toArray((error, result) => {
         if (error) throw error;
 
