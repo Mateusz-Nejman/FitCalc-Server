@@ -3,6 +3,7 @@ const cors = require("cors");
 const mongo = require("mongodb").MongoClient;
 const cool = require('cool-ascii-faces')
 var bodyParser = require('body-parser');
+const fs = require('fs');
 const PORT = process.env.PORT || 4000
 
 const getNotVerifiedHashes = require("./mongo-helper").getNotVerifiedHashes;
@@ -275,6 +276,109 @@ app.post("/download", (request, response) => {
               hash: element.hash
             }
           ];
+        });
+        console.log("start send");
+        response.send(JSON.stringify({
+          data: newProducts
+        }));
+        console.log("end send");
+        database.close();
+      });
+  });
+});
+
+app.post("/downloadNative", (request, response) => {
+  console.log("DOWNLOAD");
+  let userProductsHashes = [];
+  console.log(request.body);
+  const userProducts = request.body.data;
+
+  userProducts.forEach(element => {
+    userProductsHashes = [...userProductsHashes, element[6]];
+    console.log(element);
+  });
+
+  mongo.connect(url, (error, database) => {
+    if (error) throw error;
+    const db = database.db();
+
+    db.collection("products")
+      .find({
+        hash: {
+          $nin: userProductsHashes
+        }
+      })
+      .toArray((error, result) => {
+        if (error) throw error;
+
+        let newProducts = [];
+        result.forEach(element => {
+          newProducts = [
+            ...newProducts,
+            {
+              name: element.name,
+              protein: element.protein,
+              carbo: element.carbo,
+              fat: element.fat,
+              portion: element.portion,
+              hash: element.hash
+            }
+          ];
+        });
+        console.log("start send");
+        response.send(JSON.stringify(newProducts));
+        console.log("end send");
+        database.close();
+      });
+  });
+});
+
+app.get("/download", (request, response) => {
+  console.log("DOWNLOAD");
+  let userProductsHashes = [];
+  console.log(request.body);
+  const userProducts = [];
+
+  userProducts.forEach(element => {
+    userProductsHashes = [...userProductsHashes, element[6]];
+    console.log(element);
+  });
+
+  mongo.connect(url, (error, database) => {
+    if (error) throw error;
+    const db = database.db();
+
+    db.collection("products")
+      .find({
+        hash: {
+          $nin: userProductsHashes
+        }
+      })
+      .toArray((error, result) => {
+        if (error) throw error;
+
+        let newProducts = [];
+        result.forEach(element => {
+          newProducts = [
+            ...newProducts,
+            {
+              name: element.name,
+              protein: element.protein,
+              carbo: element.carbo,
+              fat: element.fat,
+              portion: element.portion,
+              hash: element.hash
+            }
+          ];
+        });
+
+        fs.writeFile("test.json", JSON.stringify({
+          data: newProducts
+        }), function (err) {
+          if (err) {
+            return console.log(err);
+          }
+          console.log("The file was saved!");
         });
         console.log("start send");
         response.send(JSON.stringify({
