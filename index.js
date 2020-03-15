@@ -294,7 +294,7 @@ app.post("/downloadNative", (request, response) => {
   const userProducts = request.body.data;
 
   userProducts.forEach(element => {
-    userProductsHashes = [...userProductsHashes, element[6]];
+    userProductsHashes = [...userProductsHashes, element];
     console.log(element);
   });
 
